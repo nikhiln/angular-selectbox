@@ -22,7 +22,7 @@ angular.module('selectbox', [])
             }
         };
     }])
-    .controller('SelectBoxCtrl', ['$scope', '$document', '$element', 'SelectBox', function($scope, $document, $element, SelectBox) {
+    .controller('SelectBoxCtrl', ['$scope', '$document', '$element', 'SelectBox', '$analytics', function($scope, $document, $element, SelectBox, $analytics) {
 
         SelectBox.init();
 
@@ -31,6 +31,7 @@ angular.module('selectbox', [])
         $scope.view.tabindex = SelectBox.counter;
         $scope.view.instanceId = 'inst-' + Date.now();
 
+        $scope.analytics = {};
         /**
          * Check if clicked outside the currently active select box
          *
@@ -174,6 +175,8 @@ angular.module('selectbox', [])
 
                 $scope.index = $scope.view.selected;
 
+                $scope.value = $scope.view.selected;
+
             } else {
                 if($scope.list[index][$scope.key]) {
                     $scope.view.selected = $scope.list[index][$scope.key];
@@ -182,7 +185,10 @@ angular.module('selectbox', [])
                     $scope.view.selected = $scope.list[index];
                 }
                 $scope.index = index;
+                $scope.value = $scope.view.selected;
             }
+
+            $scope.sendAnalytics();
         };
 
         /* init parse selected */
@@ -205,6 +211,28 @@ angular.module('selectbox', [])
             }
         });
 
+        /* watch if selected is specified */
+        $scope.$watch('selected', function(n, o) {
+            if(typeof(n) != 'undefined') {
+                for(var index=0; index<$scope.list.length;index++) {
+                    if($scope.key && $scope.list[index][$scope.key] == $scope.selected ) {
+                        $scope.selectItem(index);
+                    }
+                    else if($scope.list[index] == $scope.selected) {
+                        $scope.selectItem(index);
+                    }
+                }
+            }
+        });
+
+        /* analytics event */
+        $scope.sendAnalytics = function() {
+            if($scope.analyticsevent) {
+                $analytics.eventTrack($scope.analyticsevent, {  category: $scope.analyticscategory, label: $scope.analyticslabel });
+            }
+        }
+
+
         var unbindEvents = function() {
 
             $scope.view.focus = -1;
@@ -224,7 +252,8 @@ angular.module('selectbox', [])
             replace: true,
             scope: {
                 list: '=',
-                index: '=ngModel',
+                index: '@',
+                value: '=ngModel',
                 multi: '@',
                 title: '@',
                 min: '@',
@@ -232,7 +261,12 @@ angular.module('selectbox', [])
                 key: '@',
                 display: '@',
                 name: '@',
-                isrequired: '@'
+                selected: '@',
+                analyticson: '@',
+                analyticsevent: '@',
+                analyticscategory: '@',
+                analyticslabel: '@',
+                id: '@',
             },
             controller: 'SelectBoxCtrl',
             template: '<div tabindex="{{ view.tabindex }}" class="mad-selectbox" ng-class="{\'mad-selectbox-multi\': multi}">'+
@@ -243,7 +277,8 @@ angular.module('selectbox', [])
                             'ng-class="{active: view.show}">'+
                             '{{ multi ? (title || \'Select\') : (view.selected[display] || view.selected.name || view.selected || title || \'Select\') }}'+
                         '</a>'+
-                        '<input type="hidden" name="' + name + '" data-ng-model="ngModel" data-ng-required="ngRequired" />'+
+                        '<input class="hide" type="text" name="{{ name }}" value="{{ value }}" data-ng-model="ngModel" data-ng-required="ngRequired" analytics-on="{{ analyticson }}" ' +
+                           ' analytics-event="{{ analyticsevent }}" analytics-category="{{ analyticscategory }}" analytics-label="{{ analyticslabel }}" id="{{ id }}" />'+
                         '<ul class="mad-selectbox-dropdown" ng-show="view.show">'+
                             '<li ng-repeat="item in list track by $index"'+
                                 'ng-class="{active: multi ? (view.selected | contains:item.id) : ($index === index), focus: ($index === view.focus)}">'+
