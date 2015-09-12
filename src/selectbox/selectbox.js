@@ -1,6 +1,7 @@
 /**
  * Author: Milica Kadic
- * Date: 11/21/14
+ * Customized Version Author: Nikhil N
+ * Date: 09/12/15
  * Time: 6:32 PM
  */
 'use strict';
@@ -174,7 +175,12 @@ angular.module('selectbox', [])
                 $scope.index = $scope.view.selected;
 
             } else {
-                $scope.view.selected = $scope.list[index];
+                if($scope.list[index][$scope.key]) {
+                    $scope.view.selected = $scope.list[index][$scope.key];
+                }
+                else {
+                    $scope.view.selected = $scope.list[index];
+                }
                 $scope.index = index;
             }
         };
@@ -222,7 +228,9 @@ angular.module('selectbox', [])
                 multi: '@',
                 title: '@',
                 min: '@',
-                handler: '&'
+                handler: '&',
+                key: '@',
+                display: '@'
             },
             controller: 'SelectBoxCtrl',
             template: '<div tabindex="{{ view.tabindex }}" class="mad-selectbox" ng-class="{\'mad-selectbox-multi\': multi}">'+
@@ -231,12 +239,12 @@ angular.module('selectbox', [])
                             'class="mad-selectbox-toggle"'+
                             'ng-click="toggleList()"'+
                             'ng-class="{active: view.show}">'+
-                            '{{ multi ? (title || \'Select\') : (view.selected.name || view.selected || \'Select\') }}'+
+                            '{{ multi ? (title || \'Select\') : (view.selected[display] || view.selected.name || view.selected || title || \'Select\') }}'+
                         '</a>'+
                         '<ul class="mad-selectbox-dropdown" ng-show="view.show">'+
                             '<li ng-repeat="item in list track by $index"'+
                                 'ng-class="{active: multi ? (view.selected | contains:item.id) : ($index === index), focus: ($index === view.focus)}">'+
-                                '<a href class="mad-selectbox-item" ng-click="selectItem($index)">{{ item.name || item }}</a>'+
+                                '<a href class="mad-selectbox-item" ng-click="selectItem($index)">{{ item[display] || item.name || item  }}</a>'+
                             '</li>'+
                             '<li class="mad-empty" ng-if="list.length === 0">the list is empty</li>'+
                         '</ul>'+
