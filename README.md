@@ -55,3 +55,26 @@ If the list is containing the objects, the display value would be retrive using 
 Type: `String`
 
 If the list is containing the objects, the value of model would be retrive using this as a key
+
+
+Analytics Related Options (https://luisfarzati.github.io/angulartics/)
+====
+### analyticson
+Type: `String`
+
+analytics-on attribute
+
+### analyticsevent
+Type: `String`
+
+analytics-event event attribute
+
+### analyticscategory
+Type: `String`
+
+analytics-category category attribute
+
+### analyticslabel
+Type: `String`
+
+analytics-label label attribute

@@ -9,8 +9,10 @@
 angular.module('selectbox', [])
     .filter('contains', [function() {
         return function(array, element) {
-
-            return array.indexOf(element) !== -1;
+            if(array && element)
+                return array.indexOf(element) !== -1;
+            else
+                return -1;
 
         };
     }])
@@ -160,8 +162,15 @@ angular.module('selectbox', [])
 
             if ($scope.multi) {
 
-                var selectedId = $scope.list[index].id;
-                var selectedIndex = $scope.view.selected.indexOf(selectedId);
+                var selectedId = $scope.list[index];
+                if(typeof($scope.key) != 'undefined')
+                    selectedId = $scope.list[index][$scope.key];
+
+                var selectedIndex = -1;
+                if(typeof($scope.view.selected) != 'undefined')
+                    selectedIndex = $scope.view.selected.indexOf(selectedId);
+                else
+                    $scope.view.selected = []
 
                 if (selectedIndex !== -1) {
 
@@ -187,7 +196,6 @@ angular.module('selectbox', [])
                 $scope.index = index;
                 $scope.value = $scope.view.selected;
             }
-
             $scope.sendAnalytics();
         };
 
@@ -275,7 +283,9 @@ angular.module('selectbox', [])
                             'class="mad-selectbox-toggle"'+
                             'ng-click="toggleList()"'+
                             'ng-class="{active: view.show}">'+
-                            '{{ multi ? (title || \'Select\') : (view.selected[display] || view.selected.name || view.selected || title || \'Select\') }}'+
+                            '<span ng-if="!multi">{{ (view.selected[display] || view.selected.name || view.selected || title || \'Select\') }}</span>' +
+                            '<span ng-if="multi" ng-repeat="selval in view.selected track by $index">{{ (selval[display] || selval.name || selval || title || \'Select\') }}, </span>' +
+                            '<span ng-if="multi && !view.selected">{{ (title || \'Select\') }}</span>' +
                         '</a>'+
                         '<input class="hide" type="text" name="{{ name }}" value="{{ value }}" data-ng-model="ngModel" data-ng-required="ngRequired" analytics-on="{{ analyticson }}" ' +
                            ' analytics-event="{{ analyticsevent }}" analytics-category="{{ analyticscategory }}" analytics-label="{{ analyticslabel }}" id="{{ id }}" />'+
