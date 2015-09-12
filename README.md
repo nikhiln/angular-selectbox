@@ -46,8 +46,12 @@ Type: `'Function'`
 If you want to trigger certain action in the parent controller when item is selected
 
 
+### display
+Type: `String`
 
+If the list is containing the objects, the display value would be retrive using this as a key
 
+### key
+Type: `String`
 
-
-
+If the list is containing the objects, the value of model would be retrive using this as a key
