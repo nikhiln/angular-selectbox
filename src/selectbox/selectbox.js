@@ -230,7 +230,8 @@ angular.module('selectbox', [])
                 min: '@',
                 handler: '&',
                 key: '@',
-                display: '@'
+                display: '@',
+                name: '@'
             },
             controller: 'SelectBoxCtrl',
             template: '<div tabindex="{{ view.tabindex }}" class="mad-selectbox" ng-class="{\'mad-selectbox-multi\': multi}">'+
@@ -241,6 +242,7 @@ angular.module('selectbox', [])
                             'ng-class="{active: view.show}">'+
                             '{{ multi ? (title || \'Select\') : (view.selected[display] || view.selected.name || view.selected || title || \'Select\') }}'+
                         '</a>'+
+                        '<input type="hidden" name="' + name + '" data-ng-model="ngModel" />'+
                         '<ul class="mad-selectbox-dropdown" ng-show="view.show">'+
                             '<li ng-repeat="item in list track by $index"'+
                                 'ng-class="{active: multi ? (view.selected | contains:item.id) : ($index === index), focus: ($index === view.focus)}">'+
