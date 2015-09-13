@@ -1,8 +1,6 @@
 /**
  * Author: Milica Kadic
- * Customized Version Author: Nikhil N
  * Date: 09/12/15
- * Time: 6:32 PM
  */
 'use strict';
 
@@ -275,6 +273,7 @@ angular.module('selectbox', [])
                 analyticscategory: '@',
                 analyticslabel: '@',
                 id: '@',
+                required: '@'
             },
             controller: 'SelectBoxCtrl',
             template: '<div tabindex="{{ view.tabindex }}" class="mad-selectbox" ng-class="{\'mad-selectbox-multi\': multi}">'+
@@ -283,11 +282,9 @@ angular.module('selectbox', [])
                             'class="mad-selectbox-toggle"'+
                             'ng-click="toggleList()"'+
                             'ng-class="{active: view.show}">'+
-                            '<span ng-if="!multi">{{ (view.selected[display] || view.selected.name || view.selected || title || \'Select\') }}</span>' +
-                            '<span ng-if="multi" ng-repeat="selval in view.selected track by $index">{{ (selval[display] || selval.name || selval || title || \'Select\') }}, </span>' +
-                            '<span ng-if="multi && !view.selected">{{ (title || \'Select\') }}</span>' +
+                            '{{ (view.selected[display] || view.selected.name || view.selected.join() || title || \'Select\') }}' +
                         '</a>'+
-                        '<input class="hide" type="text" name="{{ name }}" value="{{ value }}" data-ng-model="ngModel" data-ng-required="ngRequired" analytics-on="{{ analyticson }}" ' +
+                        '<input class="hide" type="text" name="{{ name }}" value="{{ value }}" ng-model="value" ng-required="required" analytics-on="{{ analyticson }}" ' +
                            ' analytics-event="{{ analyticsevent }}" analytics-category="{{ analyticscategory }}" analytics-label="{{ analyticslabel }}" id="{{ id }}" />'+
                         '<ul class="mad-selectbox-dropdown" ng-show="view.show">'+
                             '<li ng-repeat="item in list track by $index"'+
