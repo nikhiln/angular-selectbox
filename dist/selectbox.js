@@ -14,14 +14,6 @@ angular.module('selectbox', [])
 
         };
     }])
-    .filter('get_selected', [function() {
-      return function (input) {
-        if(angular.isArray(input))
-            return input.join();
-        else
-            return input;
-      };
-    }])
     .service('SelectBox', [function() {
         return {
             counter: 0,
@@ -167,7 +159,6 @@ angular.module('selectbox', [])
         $scope.selectItem = function(index) {
 
             if ($scope.multi) {
-
                 var selectedId = $scope.list[index];
                 if(typeof($scope.key) != 'undefined')
                     selectedId = $scope.list[index][$scope.key];
@@ -225,28 +216,16 @@ angular.module('selectbox', [])
             }
         });
 
-        $scope.setSelected = function(value) {
-            for (var index = 0; index < $scope.list.length; index++) {
-                if ($scope.key && $scope.list[index][$scope.key] == value) {
-                    $scope.selectItem(index);
-                }
-                else if ($scope.list[index] == value) {
-                    $scope.selectItem(index);
-                }
-            }
-        }
         /* watch if selected is specified */
         $scope.$watch('selected', function(n, o) {
-
-            if(typeof($scope.selected) != 'undefined') {
-                if ($scope.multi) {
-                    var split_ar = JSON.parse($scope.selected);
-                    for (var val = 0; val < split_ar.length; val++) {
-                        $scope.setSelected(split_ar[val]);
+             if(typeof(n) != 'undefined') {
+                for(var index=0; index<$scope.list.length;index++) {
+                    if($scope.key && $scope.list[index][$scope.key] == $scope.selected ) {
+                        $scope.selectItem(index);
                     }
-                }
-                else {
-                    $scope.setSelected($scope.selected);
+                    else if($scope.list[index] == $scope.selected) {
+                        $scope.selectItem(index);
+                    }
                 }
             }
         });
@@ -302,7 +281,7 @@ angular.module('selectbox', [])
                             'class="mad-selectbox-toggle"'+
                             'ng-click="toggleList()"'+
                             'ng-class="{active: view.show}">'+
-                            '{{ (view.selected[display] || view.selected.name || (view.selected | get_selected) || title || \'Select\') }}' +
+                            '{{ (view.selected[display] || view.selected.name || (multi ? view.selected.join() : view.selected) || title || \'Select\') }}' +
                         '</a>'+
                         '<input class="hide" type="text" name="{{ name }}" value="{{ value }}" ng-model="value" ng-required="required" analytics-on="{{ analyticson }}" ' +
                            ' analytics-event="{{ analyticsevent }}" analytics-category="{{ analyticscategory }}" analytics-label="{{ analyticslabel }}" id="{{ id }}" />'+
